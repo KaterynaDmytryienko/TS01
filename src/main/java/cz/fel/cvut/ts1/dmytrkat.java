@@ -7,7 +7,8 @@ public class dmytrkat {
     }
 
     public static int factorialRecursive(int n){
-        if(n <= 1){
+
+        if(n < 1){
             return 1;
         }
         else{
