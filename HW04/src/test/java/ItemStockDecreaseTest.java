@@ -39,7 +39,7 @@ public class ItemStockDecreaseTest {
     }
 
     @Test
-    public void testDecreaseItemCount() {
+    public void DecreaseItemCountTest() {
         itemStock.decreaseItemCount(manipulationNumber);
         assertEquals(expectedNumber, itemStock.getCount());
     }

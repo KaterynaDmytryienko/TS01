@@ -59,7 +59,7 @@ public class StandartItemTest {
         }
 
         @Test
-        public void testEqualsFunction() {
+        public void equalsTest() {
             assertEquals(expectedResult, comparationItem.equals(item));
         }
 

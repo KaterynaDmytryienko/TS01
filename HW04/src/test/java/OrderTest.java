@@ -14,7 +14,7 @@ public class OrderTest {
     int state;
 
     @Test
-    public void CartCustomerNameCustomerAddressStateConstructorTest(){
+    public void CustomerNameCustomerAddressStateConstructorTest(){
         ShoppingCart cart = new ShoppingCart(items);
         Order order = new Order(cart, customerName, customerAddress, state);
         ArrayList<Item> cartItems = null;
@@ -28,7 +28,7 @@ public class OrderTest {
     }
 
     @Test
-    public void CartCustomerNameCustomerAddressConstructorTest(){
+    public void CustomerNameCustomerAddressConstructorTest(){
         ShoppingCart cart = new ShoppingCart(items);
         Order order = new Order(cart, customerName, customerAddress);
         ArrayList<Item> cartItems = null;

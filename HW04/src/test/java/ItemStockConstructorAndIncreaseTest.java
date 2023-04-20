@@ -15,7 +15,7 @@ public class ItemStockConstructorAndIncreaseTest {
     ItemStock itemStock = new ItemStock(item);
 
     @Test
-    public void ConstructorTest(){
+    public void ItemStockConstructorTest(){
         assertEquals(item, itemStock.getItem());
         assertEquals(0, itemStock.getCount());
     }

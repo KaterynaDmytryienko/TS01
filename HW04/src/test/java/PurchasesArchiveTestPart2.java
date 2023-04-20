@@ -33,7 +33,7 @@ public class PurchasesArchiveTestPart2 {
     }
 
     @Test
-    public void testPutOrderToPurchasesArchive() {
+    public void putOrderToPurchasesArchiveTest() {
         firstOrder.getItems().add(item1);
         secondOrder.getItems().add(item2);
         thirdOrder.getItems().add(item1);
