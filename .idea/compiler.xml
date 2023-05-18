@@ -9,5 +9,8 @@
         <module name="TS_Semestralka" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ts1-lab02" target="19" />
+    </bytecodeTargetLevel>
   </component>
 </project>

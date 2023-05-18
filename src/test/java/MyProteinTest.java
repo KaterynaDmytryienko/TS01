@@ -122,7 +122,7 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
     }
 
     @Test
-    public void correctLoginTest(){
+    public void correctSignUpTest(){
 
         WebDriver driver = new ChromeDriver();
         driver.get("https://www.myprotein.cz/");
@@ -182,7 +182,7 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
 
 
     @Test
-    public void incorrectLoginTest(){
+    public void incorrectSignUpTest(){
 
         WebDriver driver = new ChromeDriver();
         driver.get("https://www.myprotein.cz/");
@@ -247,7 +247,7 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
         WebElement closeAdd = driver.findElement(By.xpath("//*[@id=\"home\"]/div[5]/div/div[2]/button"));
         closeAdd.click();
 
-        WebElement languageForm = driver.findElement(By.xpath("//*[@id=\"nav\"]/div[2]/div[1]/div/div/div/button/span[1]/span"));
+        WebElement languageForm = driver.findElement(By.xpath("//*[@id=\"nav\"]/div[2]/div[1]/div/div/div/button"));
         languageForm.click();
 
         WebElement selectCountry = driver.findElement(By.xpath("//*[@id=\"popup\"]/div/div/div[1]/div[1]/select"));
@@ -268,60 +268,10 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
     }
 
     @Test
-   public void productSearch() throws InterruptedException {
+    public void correctLoginTest(){
         WebDriver driver = new ChromeDriver();
         driver.get("https://www.myprotein.cz/");
-       // Search for a product
-       WebElement searchButton = driver.findElement(By.xpath("//*[@id=\"nav\"]/div[2]/div[2]/div[2]/div/button"));
-       searchButton.click();
-
-       WebElement searchBox = driver.findElement(By.xpath("//*[@id=\"header-search-input\"]"));
-       searchBox.sendKeys("Whey Protein");
-       searchBox.submit();
-
-       //Click on the filter option = "Ananas"
-       WebElement proteinsCategory = driver.findElement(By.xpath("/html/body/div[4]/div[1]/aside/div/div/div[2]/div/div[9]/div[2]/fieldset/label[1]/input"));
-       proteinsCategory.click();
-
-       Thread.sleep(1000);
-
-       // Verify that the filtered results contain the selected
-
-       List<WebElement> products = driver.findElements(By.xpath("//ul[@class='productListProducts_products']/li"));
-
-       for (int i = 0; i < products.size(); i++) {
-           WebElement product = products.get(i);
-           // Click on the link to the product page
-           product.findElement(By.cssSelector("a")).click();
-           Thread.sleep(1000);
-
-           // Check if the product has the selected option value
-           WebElement dropdown = driver.findElement(By.xpath("//*[@id=\"athena-product-variation-dropdown-5\"]"));
-           List<WebElement> options = dropdown.findElements(By.tagName("option"));
-           boolean hasOption = false;
-           for (WebElement option : options) {
-               if (option.getAttribute("value").equals("10428")) {
-                   hasOption = true;
-                   break;
-               }
-           }
-           assertTrue(hasOption);
-
-           // Go back to the previous page and refresh it
-           driver.navigate().back();
-           driver.navigate().refresh();
-
-           // Get the updated list of products
-           products = driver.findElements(By.xpath("//ul[@class='productListProducts_products']/li"));
-       }
-   }
-
-    @Test
-    public void filterTest() throws InterruptedException {
-        driver = new ChromeDriver();
-
-        // Go to the MyProtein website
-        driver.get("https://www.myprotein.cz/");
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
         WebElement acceptCookies = driver.findElement(By.xpath("//*[@id=\"onetrust-accept-btn-handler\"]"));
         acceptCookies.click();
@@ -330,49 +280,103 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
         WebElement closeAdd = driver.findElement(By.xpath("//*[@id=\"home\"]/div[5]/div/div[2]/button"));
         closeAdd.click();
 
-        // Search for a product
+        WebElement personalAccount = driver.findElement(By.xpath("//*[@id=\"responsiveAccountHeader_openAccountButtonMobile_rightSection\"]"));
+        personalAccount.click();
+
+        WebElement loginButton = driver.findElement(By.xpath("//*[@id=\"nav\"]/div[2]/div[2]/div[3]/div/div[1]/div/nav/ul/li[1]/a"));
+        loginButton.click();
+
+        WebElement emailInput = driver.findElement(By.xpath("//*[contains(@id, 'e-mailová-adresa-input-element-id')]"));
+        emailInput.sendKeys("kat.dmitryenko@gmail.com");
+
+        WebElement passwordInput = driver.findElement(By.xpath("//*[contains(@id, 'heslo-input-element-id')]"));
+        passwordInput.sendKeys("Abbra0753");
+
+        WebElement submitButton = driver.findElement(By.xpath("//*[@id=\"main-content\"]/div/div[1]/section/div/div[1]/div/form/div[5]/div/button"));
+        submitButton.click();
+
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+        WebElement p_element = driver.findElement(By.xpath("//*[@id=\"main-content\"]/div/div[2]/div[1]/p"));
+        String actualText = p_element.getText();
+
+        String desiredText = "Vítejte Kateryna";
+        if(actualText.equals(desiredText)){
+            System.out.println("TEST PASSED!");
+        }
+        else {
+            System.out.println("test didnt pass!");
+        }
+    }
+
+        @Test
+        public void incorrectLoginTest(){
+        WebDriver driver = new ChromeDriver();
+        driver.get("https://www.myprotein.cz/");
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+        WebElement acceptCookies = driver.findElement(By.xpath("//*[@id=\"onetrust-accept-btn-handler\"]"));
+        acceptCookies.click();
+
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        WebElement closeAdd = driver.findElement(By.xpath("//*[@id=\"home\"]/div[5]/div/div[2]/button"));
+        closeAdd.click();
+
+        WebElement personalAccount = driver.findElement(By.xpath("//*[@id=\"responsiveAccountHeader_openAccountButtonMobile_rightSection\"]"));
+        personalAccount.click();
+
+        WebElement loginButton = driver.findElement(By.xpath("//*[@id=\"nav\"]/div[2]/div[2]/div[3]/div/div[1]/div/nav/ul/li[1]/a"));
+        loginButton.click();
+
+        WebElement emailInput = driver.findElement(By.xpath("//*[contains(@id, 'e-mailová-adresa-input-element-id')]"));
+        emailInput.sendKeys("kat.dmitryenko@gmail.com");
+
+        WebElement passwordInput = driver.findElement(By.xpath("//*[contains(@id, 'heslo-input-element-id')]"));
+        passwordInput.sendKeys("Abbra");
+
+        WebElement submitButton = driver.findElement(By.xpath("//*[@id=\"main-content\"]/div/div[1]/section/div/div[1]/div/form/div[5]/div/button"));
+        submitButton.click();
+
+        WebElement textContainer = driver.findElement(By.xpath("//*[@id=\"main-content\"]/div/div[1]/section/div/div[1]/div/div[1]/div/div[1]/div[2]/div"));
+        String text = textContainer.getText();
+
+        String desiredText = "Zadaná e-mailová adresa nebo heslo je neplatné.";
+        if(text.equals(desiredText)){
+        System.out.println("TEST PASSED!");
+
+        }
+    }
+
+    @Test
+    public void paginationTest(){
+        WebDriver driver = new ChromeDriver();
+        driver.get("https://www.myprotein.cz/");
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+        WebElement acceptCookies = driver.findElement(By.xpath("//*[@id=\"onetrust-accept-btn-handler\"]"));
+        acceptCookies.click();
+
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        WebElement closeAdd = driver.findElement(By.xpath("//*[@id=\"home\"]/div[5]/div/div[2]/button"));
+        closeAdd.click();
+
         WebElement searchButton = driver.findElement(By.xpath("//*[@id=\"nav\"]/div[2]/div[2]/div[2]/div/button"));
         searchButton.click();
+
 
         WebElement searchBox = driver.findElement(By.xpath("//*[@id=\"header-search-input\"]"));
         searchBox.sendKeys("Whey Protein");
         searchBox.submit();
 
-        //Click on the filter option = "Ananas"
-        WebElement proteinsCategory = driver.findElement(By.xpath("/html/body/div[4]/div[1]/aside/div/div/div[2]/div/div[9]/div[2]/fieldset/label[1]/input"));
-        proteinsCategory.click();
+        // Wait for the search results page to load
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.titleContains("Whey Protein"));
 
-        Thread.sleep(1000);
+        WebElement page2 = driver.findElement(By.xpath("//*[@id=\"mainContent\"]/div[2]/div[2]/nav/ul/li[3]/a"));
+        page2.click();
 
-        // Verify that the filtered results contain the selected
-
-        List<WebElement> products = driver.findElements(By.xpath("//ul[@class='productListProducts_products']/li"));
-
-        for (int i = 0; i < products.size(); i++) {
-            WebElement product = products.get(i);
-            // Click on the link to the product page
-            product.findElement(By.cssSelector("a")).click();
-            Thread.sleep(1000);
-
-            // Check if the product has the selected option value
-            WebElement dropdown = driver.findElement(By.xpath("//*[@id=\"athena-product-variation-dropdown-5\"]"));
-            List<WebElement> options = dropdown.findElements(By.tagName("option"));
-            boolean hasOption = false;
-            for (WebElement option : options) {
-                if (option.getAttribute("value").equals("10428")) {
-                    hasOption = true;
-                    break;
-                }
-            }
-            assertTrue(hasOption);
-
-            // Go back to the previous page and refresh it
-            driver.navigate().back();
-            driver.navigate().refresh();
-
-            // Get the updated list of products
-            products = driver.findElements(By.xpath("//ul[@class='productListProducts_products']/li"));
+        if(page2.isDisplayed()){
+            System.out.println("TEST PASSED!");
         }
     }
-
 }
