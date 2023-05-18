@@ -268,6 +268,65 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
     }
 
     @Test
+   public void filterPrice() throws InterruptedException {
+        WebDriver driver;
+
+        driver = new ChromeDriver();
+
+        // Go to the MyProtein website
+        driver.get("https://www.myprotein.cz/");
+
+        WebElement acceptCookies = driver.findElement(By.xpath("//*[@id=\"onetrust-accept-btn-handler\"]"));
+        acceptCookies.click();
+
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        WebElement closeAdd = driver.findElement(By.xpath("//*[@id=\"home\"]/div[5]/div/div[2]/button"));
+        closeAdd.click();
+
+        WebElement menuButton = driver.findElement(By.xpath("//*[@id=\"nav\"]/div[2]/div[2]/button"));
+        menuButton.click();
+
+        //Click on the filter option = "Tyčinky a snacky"
+
+        WebElement snacksCategory = driver.findElement(By.xpath ("//*[@id=\"nav\"]/div[2]/div[2]/div[5]/nav/div[1]/div[2]/ul/li[3]/a"));
+        snacksCategory.click();
+
+        Thread.sleep(100);
+
+        //Click on the filter option = "Tyčinky"
+        WebElement proteinsCategory = driver.findElement(By.xpath("//*[@id=\"home\"]/div[5]/div[1]/aside/div/div/div[2]/div/div[1]/div[2]/fieldset/label[17]"));
+        proteinsCategory.click();
+
+        Thread.sleep(1000);
+
+        //Click on the filter relevance "Cena: Od nejnižšího k nejvyššímu"
+        WebElement filterElement = driver.findElement(By.xpath("//*[@id=\"mainContent\"]/div[2]/div[1]/div/select/option[3]"));
+        filterElement.click();
+
+        Thread.sleep(1000);
+
+        List<WebElement> productPrices = driver.findElements(By.xpath("//ul[@class='productListProducts_products']/li"));
+        double previousPrice = Double.MAX_VALUE;
+
+        for (WebElement productPrice : productPrices) {
+            System.out.println("yes");
+            // Get the price element of the product
+            productPrice = driver.findElement(By.xpath(".//span[@class='athenaProductBlock_priceValue']"));
+
+            // Check if the price element has the class "athenaProductBlock_priceValue"
+            if (productPrice.getAttribute("class").contains("athenaProductBlock_priceValue")) {
+                // Extract the price value from the text of the price element
+                double currentPrice = Double.parseDouble(productPrice.getText().replaceAll("\\D+",""));
+                assertTrue(currentPrice <= previousPrice);
+                previousPrice = currentPrice;
+            }
+        }
+   }
+
+   
+   
+   
+    @Test
     public void correctLoginTest(){
         WebDriver driver = new ChromeDriver();
         driver.get("https://www.myprotein.cz/");
@@ -309,8 +368,8 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
         }
     }
 
-        @Test
-        public void incorrectLoginTest(){
+    @Test
+    public void incorrectLoginTest(){
         WebDriver driver = new ChromeDriver();
         driver.get("https://www.myprotein.cz/");
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
@@ -342,8 +401,67 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
 
         String desiredText = "Zadaná e-mailová adresa nebo heslo je neplatné.";
         if(text.equals(desiredText)){
-        System.out.println("TEST PASSED!");
+            System.out.println("TEST PASSED!");
 
+        }
+    }
+
+    @Test
+    public void incorrectfilterTest() throws InterruptedException {
+        driver = new ChromeDriver();
+
+        // Go to the MyProtein website
+        driver.get("https://www.myprotein.cz/");
+
+        WebElement acceptCookies = driver.findElement(By.xpath("//*[@id=\"onetrust-accept-btn-handler\"]"));
+        acceptCookies.click();
+
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        WebElement closeAdd = driver.findElement(By.xpath("//*[@id=\"home\"]/div[5]/div/div[2]/button"));
+        closeAdd.click();
+
+        // Search for a product
+        WebElement searchButton = driver.findElement(By.xpath("//*[@id=\"nav\"]/div[2]/div[2]/div[2]/div/button"));
+        searchButton.click();
+
+        WebElement searchBox = driver.findElement(By.xpath("//*[@id=\"header-search-input\"]"));
+        searchBox.sendKeys("Whey Protein");
+        searchBox.submit();
+
+        //Click on the filter option = "Ananas"
+        WebElement proteinsCategory = driver.findElement(By.xpath("/html/body/div[4]/div[1]/aside/div/div/div[2]/div/div[9]/div[2]/fieldset/label[1]/input"));
+        proteinsCategory.click();
+
+        Thread.sleep(1000);
+
+        // Verify that the filtered results contain the selected
+
+        List<WebElement> products = driver.findElements(By.xpath("//ul[@class='productListProducts_products']/li"));
+
+        for (int i = 0; i < products.size(); i++) {
+            WebElement product = products.get(i);
+            // Click on the link to the product page
+            product.findElement(By.cssSelector("a")).click();
+            Thread.sleep(1000);
+
+            // Check if the product has the selected option value
+            WebElement dropdown = driver.findElement(By.xpath("//*[@id=\"athena-product-variation-dropdown-5\"]"));
+            List<WebElement> options = dropdown.findElements(By.tagName("option"));
+            boolean hasOption = false;
+            for (WebElement option : options) {
+                if (option.getAttribute("value").equals("10428")) {
+                    hasOption = true;
+                    break;
+                }
+            }
+            assertTrue(hasOption);
+
+            // Go back to the previous page and refresh it
+            driver.navigate().back();
+            driver.navigate().refresh();
+
+            // Get the updated list of products
+            products = driver.findElements(By.xpath("//ul[@class='productListProducts_products']/li"));
         }
     }
 
@@ -379,4 +497,6 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
             System.out.println("TEST PASSED!");
         }
     }
+
 }
+
