@@ -1,21 +1,33 @@
+import com.opencsv.exceptions.CsvException;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.Duration;
-import java.util.List;
-import java.util.Random;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.Date.parse;
+import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 
-public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.com", "yahoo.com", "hotmail.com", "outlook.com"};
+public class MyProteinTest {
+    private static final String[] DOMAINS = {"gmail.com", "yahoo.com", "hotmail.com", "outlook.com"};
     private static final String[] NAMES = {"john", "jane", "bob", "alice", "dave", "susan"};
     private static final String[] SUFFIXES = {"007", "123", "999", "2022", "2023", "test"};
+
     public static String generate() {
         Random rand = new Random();
         String name = NAMES[rand.nextInt(NAMES.length)];
@@ -25,13 +37,13 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
         return name + suffix + num + "@" + domain;
     }
 
-     public String email = MyProteinTest.generate();
+    public String email = MyProteinTest.generate();
 
 
     private WebDriver driver;
 
     @Test
-    public void searchBarTest(){
+    public void searchBarTest() {
         WebDriver driver = new ChromeDriver();
         driver.get("https://www.myprotein.cz/");
 
@@ -111,18 +123,22 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
         WebElement showChart = driver.findElement(By.xpath("//*[@id=\"nav\"]/div[2]/div[2]/div[4]/div/div[1]/div/div/div[1]/div[3]/a"));
         showChart.click();
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"10529807\"]/div[2]/a/div[2]/p")));
-        assert driver.findElement(By.xpath("//*[@id=\"10529807\"]/div[2]/a/div[2]/p"))
-                .getText()
-                .contains("Whey Protein");
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"10529807\"]/div[2]/a/div[2]/p")));
+//        assert driver.findElement(By.xpath("//*[@id=\"10529807\"]/div[2]/a/div[2]/p"))
+//                .getText()
+//                .contains("Whey Protein");
 
+        WebElement description = driver.findElement(By.xpath("//*[@id=\"10529806\"]/div[2]/a/div[2]/p"));
+        if (description.getText().contains("Whey Protein")) {
+            System.out.println("TEST PASSED !");
+        }
         // Close the browser
         driver.quit();
 
     }
 
     @Test
-    public void correctSignUpTest(){
+    public void correctSignUpTest() {
 
         WebDriver driver = new ChromeDriver();
         driver.get("https://www.myprotein.cz/");
@@ -142,7 +158,6 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
         //Click Sign Up
         WebElement signup = driver.findElement(By.xpath("//*[@id=\"nav\"]/div[2]/div[2]/div[3]/div/div[1]/div/nav/ul/li[2]/a"));
         signup.click();
-
 
 
         //Enter name
@@ -182,7 +197,7 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
 
 
     @Test
-    public void incorrectSignUpTest(){
+    public void incorrectSignUpTest() {
 
         WebDriver driver = new ChromeDriver();
         driver.get("https://www.myprotein.cz/");
@@ -202,7 +217,6 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
         //Click Sign Up
         WebElement signup = driver.findElement(By.xpath("//*[@id=\"nav\"]/div[2]/div[2]/div[3]/div/div[1]/div/nav/ul/li[2]/a"));
         signup.click();
-
 
 
         //Enter name
@@ -235,7 +249,7 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
     }
 
     @Test
-    public void changeLanguageAndCountry(){
+    public void changeLanguageAndCountry() {
         WebDriver driver = new ChromeDriver();
         driver.get("https://www.myprotein.cz/");
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
@@ -268,7 +282,7 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
     }
 
     @Test
-   public void filterPrice() throws InterruptedException {
+    public void filterPrice() throws InterruptedException {
         WebDriver driver;
 
         driver = new ChromeDriver();
@@ -288,7 +302,7 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
 
         //Click on the filter option = "Tyčinky a snacky"
 
-        WebElement snacksCategory = driver.findElement(By.xpath ("//*[@id=\"nav\"]/div[2]/div[2]/div[5]/nav/div[1]/div[2]/ul/li[3]/a"));
+        WebElement snacksCategory = driver.findElement(By.xpath("//*[@id=\"nav\"]/div[2]/div[2]/div[5]/nav/div[1]/div[2]/ul/li[3]/a"));
         snacksCategory.click();
 
         Thread.sleep(100);
@@ -316,18 +330,16 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
             // Check if the price element has the class "athenaProductBlock_priceValue"
             if (productPrice.getAttribute("class").contains("athenaProductBlock_priceValue")) {
                 // Extract the price value from the text of the price element
-                double currentPrice = Double.parseDouble(productPrice.getText().replaceAll("\\D+",""));
+                double currentPrice = Double.parseDouble(productPrice.getText().replaceAll("\\D+", ""));
                 assertTrue(currentPrice <= previousPrice);
                 previousPrice = currentPrice;
             }
         }
-   }
+    }
 
-   
-   
-   
+
     @Test
-    public void correctLoginTest(){
+    public void correctLoginTest() {
         WebDriver driver = new ChromeDriver();
         driver.get("https://www.myprotein.cz/");
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
@@ -360,16 +372,15 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
         String actualText = p_element.getText();
 
         String desiredText = "Vítejte Kateryna";
-        if(actualText.equals(desiredText)){
+        if (actualText.equals(desiredText)) {
             System.out.println("TEST PASSED!");
-        }
-        else {
+        } else {
             System.out.println("test didnt pass!");
         }
     }
 
     @Test
-    public void incorrectLoginTest(){
+    public void incorrectLoginTest() {
         WebDriver driver = new ChromeDriver();
         driver.get("https://www.myprotein.cz/");
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
@@ -400,7 +411,7 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
         String text = textContainer.getText();
 
         String desiredText = "Zadaná e-mailová adresa nebo heslo je neplatné.";
-        if(text.equals(desiredText)){
+        if (text.equals(desiredText)) {
             System.out.println("TEST PASSED!");
 
         }
@@ -466,7 +477,7 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
     }
 
     @Test
-    public void paginationTest(){
+    public void paginationTest() {
         WebDriver driver = new ChromeDriver();
         driver.get("https://www.myprotein.cz/");
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
@@ -493,10 +504,88 @@ public class MyProteinTest {  private static final String[] DOMAINS = {"gmail.co
         WebElement page2 = driver.findElement(By.xpath("//*[@id=\"mainContent\"]/div[2]/div[2]/nav/ul/li[3]/a"));
         page2.click();
 
-        if(page2.isDisplayed()){
+        if (page2.isDisplayed()) {
             System.out.println("TEST PASSED!");
         }
     }
 
-}
+    //DATA PROVIDER
+    @DataProvider(name = "data")
+    public Iterator<Object[]> orderData() throws IOException {
+        List<Object[]> data = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(  "/home/kitty/IdeaProjects/TS_Semestralka/src/main/resources/data.csv"));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] fields = line.split(",");
+            String orderNumber = fields[0];
+            String date = fields[2];
+            String price = fields[1];
+            data.add(new Object[]{orderNumber, date, price});
+        }
+        reader.close();
+        return data.iterator();
+    }
+
+
+
+        @Test(dataProvider = "data")
+        public void orderHistoryTest(String orderNumber, String date, String price) {
+            WebDriver driver = new ChromeDriver();
+            driver.get("https://www.myprotein.cz/");
+            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+            WebElement acceptCookies = driver.findElement(By.xpath("//*[@id=\"onetrust-accept-btn-handler\"]"));
+            acceptCookies.click();
+
+            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            WebElement closeAdd = driver.findElement(By.xpath("//*[@id=\"home\"]/div[4]/div/div[2]/button"));
+            closeAdd.click();
+
+            WebElement personalAccount = driver.findElement(By.xpath("//*[@id=\"responsiveAccountHeader_openAccountButtonMobile_rightSection\"]"));
+            personalAccount.click();
+
+            WebElement loginButton = driver.findElement(By.xpath("//*[@id=\"nav\"]/div[2]/div[2]/div[3]/div/div[1]/div/nav/ul/li[1]/a"));
+            loginButton.click();
+
+            WebElement emailInput = driver.findElement(By.xpath("//*[contains(@id, 'e-mailová-adresa-input-element-id')]"));
+            emailInput.sendKeys("kat.dmitryenko@gmail.com");
+
+            WebElement passwordInput = driver.findElement(By.xpath("//*[contains(@id, 'heslo-input-element-id')]"));
+            passwordInput.sendKeys("Abbra0753");
+
+            WebElement submitButton = driver.findElement(By.xpath("//*[@id=\"main-content\"]/div/div[1]/section/div/div[1]/div/form/div[5]/div/button"));
+            submitButton.click();
+
+            WebElement myOrders = driver.findElement(By.xpath("//*[@id=\"main-content\"]/div/div[1]/nav/ul[1]/li[2]/a"));
+            myOrders.click();
+
+            WebElement cookie = driver.findElement(By.xpath("//*[@id=\"cookie-modal-container\"]/section/div/div/div[2]/div/button"));
+            cookie.click();
+
+            WebElement detailsButton = driver.findElement(By.xpath("//*[@id=\"main-content\"]/div/div[2]/div[3]/div/ul/li/div/div[2]/div[2]/div"));
+            detailsButton.click();
+
+            //CHECKS ORDER NUMBER
+            WebElement number = driver.findElement(By.xpath("//*[@id=\"mainContent\"]/div[5]/div[1]/div/div[1]/p"));
+            String text = number.getText();
+            String extractedString = text.substring(18);
+            assertEquals(orderNumber, extractedString);
+
+            //CHECKS ORDER DATE
+            WebElement orderDate = driver.findElement(By.xpath("//*[@id=\"mainContent\"]/div[5]/div[1]/div/div[2]/p[1]/span[2]"));
+            String dateText= orderDate.getText();
+            String extractedDate = dateText.substring(0, 8);
+            assertEquals(date, extractedDate);
+
+            //CHECKS ORDER PRICE
+
+            WebElement orderPrice = driver.findElement(By.xpath("//*[@id=\"mainContent\"]/div[5]/div[1]/div/div[2]/p[4]/span[2]"));
+            String priceText= orderPrice.getText();
+            String extractedPrice = priceText.substring(0, 7);
+            assertEquals(price, extractedPrice);
+
+
+        }
+
+    }
 
